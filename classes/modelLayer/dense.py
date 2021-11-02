@@ -1,3 +1,4 @@
+import numpy as np
 
 class Dense():
     def __init__(self, perceptronCnt, input_shape, reshape, activation='relu'):
@@ -10,4 +11,17 @@ class Dense():
 
     def activation(self):
         if self.activation != 'relu':
-            return
+            self.relu()
+
+    def relu(self, x):
+        return np.maximum(0, x)
+    
+    def softmax(self, x):
+        array_x = x - np.max(x)
+
+        exp_x = np.exp(array_x)
+        result = exp_x / np.sum(exp_x)
+        return result
+
+
+
