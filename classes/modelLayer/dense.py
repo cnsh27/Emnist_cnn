@@ -24,4 +24,4 @@ class Dense():
         return result
 
 
-
+dense = Dense(32, input_shape=(28,28,1), activation='softmax')

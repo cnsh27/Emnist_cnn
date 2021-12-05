@@ -81,7 +81,8 @@ class Model():
         elif layer.__class__.__name__ == "Conv2D":
             return
         elif layer.__class__.__name__ == "MaxPooling2D":
-
+            pass
     def compile(self, optimizer, loss='categorical_crossentalpy', metrics=['accuracy']):
-
+        pass
     def fit(self):
+        pass
