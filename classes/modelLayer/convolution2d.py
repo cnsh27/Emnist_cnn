@@ -5,6 +5,7 @@ class Conv2d():
         self.row_max = input_shape[0]
         self.col_max = input_shape[1]
         # kernel 지정 (identity, edge0, edge1, edge2, sharpen, box_blur, gaussian_blur,emboss)
+        self.filters = filters
         if kernel_type == 'identity':
             self.kernel = np.array([[0, 0, 0],
                                     [0, 1, 0],
@@ -46,17 +47,34 @@ class Conv2d():
             exit('failed upload kernel_type!')
 
         self.IMG = IMG
-        self.result = np.zeros((self.row_max - 2, self.col_max - 2))
+        # self.result = np.zeros((self.row_max, self.col_max))
+
+    def pad_with(self, vector, pad_width, iaxis, kwargs):
+        pad_value = kwargs.get('padder', 0)
+        vector[:pad_width[0]] = pad_value
+        vector[-pad_width[1]:] = pad_value
 
     def convolution_unit(self, i, j):  # 컨볼루션
         calculate = 0
         for u in range(3):
             for v in range(3):
-                calculate += self.IMG[i+u][j+v]*self.kernel[u][v]
-        return calculate
+                calculate += self.IMG[i + u][j + v] * self.kernel[u][v]
+        if calculate < 0:
+            return 0  # activation function RELU
+        else:
+            return calculate
 
     # TODO : range 의 max 설정이 잘 못 된 것 같다.
     def Convolution2D(self):
-        for i in range(self.row_max-2):
-            for j in range(self.col_max-2):
+        for i in range(self.row_max):
+            for j in range(self.col_max):
                 self.result[i][j] = self.convolution_unit(i, j)
+
+    def layer(self):
+        for k in range(self.filters):
+            self.IMG = np.pad(self.IMG, 1, self.pad_with)  # padding
+            self.result = np.zeros((self.row_max, self.col_max))
+            self.Convolution2D()
+            self.IMG = self.result
+        return self.IMG
+
