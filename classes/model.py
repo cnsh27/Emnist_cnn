@@ -1,8 +1,4 @@
-<<<<<<< Updated upstream
-=======
 
-                             
->>>>>>> Stashed changes
 class Model():
     def __init__(self):
         return
