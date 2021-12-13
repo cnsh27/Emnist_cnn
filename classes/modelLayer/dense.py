@@ -9,7 +9,7 @@ class Adam:
         self.m = None
         self.v = None
 
-    def update(self, params, grads):
+    def update(self, params, grads): # params는 w, grads는 w에 대한 손실함수의 기울기 = (예측값 - 실제값) * 입력값
 
         if self.m is None:
             self.m, self.v = {}, {}
@@ -25,12 +25,26 @@ class Adam:
         return params
 
 class CCE:
-    def __init__(self, batch):
+    batch = 1
+    lastBatch = 0
+
+    def setBatch(self, batch):
         self.batch = batch
 
-    def loss(self, y, t):
+    def loss(self, y, t): # y : 원핫인코딩 된 1차원 배열이 클래스의 크기만큼 길이를 가짐. 따라서 여러 샘플을 가져서 2차원 배열로 존재. t는 실제값
+        lastInd = min(self.lastBatch+self.batch, len(y)+1)
+        
+        yBatch = y[self.lastBatch : lastInd]
+        tBatch = t[self.lastBatch : lastInd]
+        
         delta = 1e-7
-        return -np.sum(t * np.log(y+delta) + (1 - t) * np.log(1 - y)) / self.batch
+        returnData = -np.sum(tBatch * np.log(yBatch + delta)) / (lastInd - self.lastBatch)
+
+        self.lastBatch += self.batch
+        return returnData
+
+    def lossSlope(self, y, t, x):
+        return (y - t) * x
 
 
 class Layer():
@@ -39,27 +53,27 @@ class Layer():
         self.perceptrons = []
         self.activation = activation
         self.adam = Adam()
+        self.cce = CCE()
 
-    def forward(self):
+    def forward(self): # 1차원 배열 x와 2차원 배열 w의 합성곱 z
         xArray = np.empty((0, self.perceptronCnt))
-        temp = []
         for perceptron in self.perceptrons:
-            temp.append(perceptron)
-        for i in range(self.perceptronCnt):
-            xArray = np.append(xArray, np.array([temp]), axis=0)
+            xArray = np.append(xArray, perceptron.z, axis=0)
 
-        wArray = np.empty((0, perceptron.wCnt))
+        wArray = np.array([])
         for perceptron in self.perceptrons:
             wArray = np.append(wArray, np.array([perceptron.w]), axis=0)
 
         zArray = xArray.dot(wArray)
 
-        return zArray
+        return self.activation(zArray)
     
     def backward(self):
-        pass
-
-
+        fixedWArray = np.array([])
+        for perceptron in self.perceptrons:
+            gradients = []
+            fixedWArray = np.append(fixedWArray, np.array([self.adam.update(perceptron.w, gradients)]), axis=0)
+        return fixedWArray
 
 
     def activation(self, x):
@@ -71,7 +85,7 @@ class Layer():
     def relu(self, x):
         return np.maximum(0, x)
     
-    def softmax(self, x):
+    def softmax(self, x): # x는 일차원 배열
         array_x = x - np.max(x)
 
         exp_x = np.exp(array_x)
