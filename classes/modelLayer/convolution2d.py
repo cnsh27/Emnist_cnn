@@ -2,6 +2,7 @@ import numpy as np
 
 class Conv2d():
     def __init__(self, filterCnt, input_shape, kernel_size=5, kernel_type='edge0'):
+        self.type = "conv2d"
         self.filterCnt = filterCnt
         self.row_max = input_shape[0]
         self.col_max = input_shape[1]
@@ -76,7 +77,7 @@ class Conv2d():
         return result
 
     def layer(self, img):
-        nextImgs = []
+        nextImgs = np.array([])
         
         for i in range(self.filterCnt):
             nextImg = np.zeros(tuple(sum(elem) for elem in zip(img[0].shape, (-4, -4)))) # 
@@ -85,7 +86,7 @@ class Conv2d():
                 nextImg = np.array([nextImg] + [self.Convolution2D(img[j], self.filter[i][j])])
                 nextImg = nextImg.sum(axis=0)
             
-            nextImgs.append(nextImg)
+            nextImgs = np.append(nextImgs, nextImg, axis=0)
             
         return nextImgs
 

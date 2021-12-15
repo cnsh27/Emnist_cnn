@@ -47,8 +47,9 @@ class CCE:
         return (y - t) * x
 
 
-class Layer():
+class Dense():
     def __init__(self, perceptronCnt, activation='relu'):
+        self.type = "dense"
         self.perceptronCnt = perceptronCnt
         self.perceptrons = []
         self.activation = activation
@@ -92,7 +93,3 @@ class Layer():
         result = exp_x / np.sum(exp_x)
         return result
 
-layer = Layer(5)
-layer.perceptrons = [3, 10, 42, 1, 5]
-
-layer.forward()

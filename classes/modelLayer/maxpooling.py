@@ -3,6 +3,7 @@ import numpy as np
 class Maxpooling(): # stride = 2로 고정
     def __init__(self, pool_size=(2,2)):
         self.pool_size = pool_size
+        self.type = "maxpooling"
     
     def maxpooling(self, imgs):
         newImgs = np.array([])
