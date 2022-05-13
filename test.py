@@ -68,3 +68,16 @@ print("label ", train_labels[0])
 
 
 model = Model()
+model.models = [
+    Conv2d(512, (28, 28, 1), 5),
+    Maxpooling(),
+    Flatten()
+]
+model.denses = [
+    Dense(512),
+    Dense(64, activation='softmax')
+]
+
+
+model.compile()
+model.fit(train_images, train_labels, batch_size=128)

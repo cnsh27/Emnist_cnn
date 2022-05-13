@@ -9,7 +9,7 @@ class Adam:
         self.m = None
         self.v = None
 
-    def update(self, params, grads): # params는 w, grads는 w에 대한 손실함수의 기울기 = (예측값 - 실제값) * 입력값
+    def update(self, params, grads):
 
         if self.m is None:
             self.m, self.v = {}, {}
@@ -31,7 +31,7 @@ class CCE:
     def setBatch(self, batch):
         self.batch = batch
 
-    def loss(self, y, t): # y : 원핫인코딩 된 1차원 배열이 클래스의 크기만큼 길이를 가짐. 따라서 여러 샘플을 가져서 2차원 배열로 존재. t는 실제값
+    def loss(self, y, t): 
         lastInd = min(self.lastBatch+self.batch, len(y)+1)
         
         yBatch = y[self.lastBatch : lastInd]

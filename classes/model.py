@@ -71,6 +71,7 @@ class Model():
                 for i in range(len(dense.perceptrons)):
                     dense.perceptrons[i].x = data[i]
                 data = dense.forward()
+                self.feedForward()
             for dense in reversed(self.denses):
                 for i in range(len(dense.perceptrons)):
                     dense.perceptrons[i].w = w[i]
